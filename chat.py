@@ -628,6 +628,7 @@ def set_submit_button(active):
         submit_button.configure(command=cancel_streaming)
         
 # Initialize the main application window
+# 메인 애플리케이션 창 초기화
 app = tk.Tk()
 app.geometry("800x600")
 app.title("Chat Completions GUI")
@@ -639,10 +640,12 @@ if os.name == 'nt':
     ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 0)
 
 # Create the main_frame for holding the chat and other widgets
+# 채팅 및 기타 위젯을 보관하기 위한 main_frame 만들기
 main_frame = ttk.Frame(app, padding="10")
 main_frame.grid(row=1, column=0, sticky="nsew")
 
 # System message and model selection
+# 시스템 메시지 및 모델 선택
 system_message = tk.StringVar(value=system_message_default_text)
 ttk.Label(main_frame, text="System message:").grid(row=0, column=0, sticky="w")
 system_message_widget = tk.Text(main_frame, wrap=tk.WORD, height=5, width=50)
@@ -654,6 +657,7 @@ ttk.Label(main_frame, text="Model:").grid(row=0, column=6, sticky="ne")
 ttk.OptionMenu(main_frame, model_var, "gpt-3.5-turbo", "gpt-3.5-turbo", "gpt-4", "gpt-3.5-turbo-0301", "gpt-4-0314").grid(row=0, column=7, sticky="nw")
 
 # Add sliders for temperature, max length, and top p
+# temperature, max length 및 top p에 대한 슬라이더 추가
 temperature_var = tk.DoubleVar(value=0.7)
 ttk.Label(main_frame, text="Temperature:").grid(row=0, column=6, sticky="e")
 temperature_scale = ttk.Scale(main_frame, variable=temperature_var, from_=0, to=1, orient="horizontal")
@@ -665,6 +669,7 @@ max_length_scale = ttk.Scale(main_frame, variable=max_length_var, from_=1, to=40
 max_length_scale.grid(row=0, column=7, sticky="sw")
 
 # Add Entry widgets for temperature and max length
+# temperature 및 max length에 대한 항목 위젯 추가
 temp_entry_var = tk.StringVar()
 temp_entry = ttk.Entry(main_frame, textvariable=temp_entry_var, width=5)
 temp_entry.grid(row=0, column=8, sticky="w")
@@ -680,6 +685,7 @@ max_length_var.trace("w", lambda *args: max_len_entry_var.set(max_length_var.get
 max_len_entry_var.trace("w", on_max_len_entry_change)
 
 # Chat frame and scrollbar
+# 채팅 프레임 및 스크롤바
 chat_history = []
 chat_frame = tk.Canvas(main_frame, highlightthickness=0)
 chat_frame.grid(row=1, column=0, columnspan=9, sticky="nsew")
@@ -693,12 +699,14 @@ chat_scroll.grid(row=1, column=9, sticky="ns")
 chat_frame.configure(yscrollcommand=chat_scroll.set)
 
 # Add button for chat messages
+# 채팅 메시지 버튼 추가
 add_button_row = 1
 add_button = ttk.Button(inner_frame, text="+", width=2, command=add_message_via_button)
 add_button_label = ttk.Label(inner_frame, text="Add")
 ToolTip(add_button, "Add new message")
 
 # Submit button
+# 제출 버튼
 submit_button_text = tk.StringVar()  # Create a StringVar variable to control the text of the submit button
 submit_button_text.set("Submit")  # Set the initial text of the submit button to "Submit"
 submit_button = ttk.Button(main_frame, textvariable=submit_button_text, command=send_request)  # Use textvariable instead of text
@@ -707,10 +715,12 @@ submit_button.grid(row=7, column=7, sticky="e")
 add_message("user", "")
 
 # Configuration frame for API key, Org ID, and buttons
+# API 키, 조직 ID 및 버튼에 대한 구성 프레임
 configuration_frame = ttk.Frame(app, padding="3")
 configuration_frame.grid(row=0, column=0, sticky="new")
 config_row = 0
 # Add a dropdown menu to select a chat log file to load
+# 로드할 채팅 로그 파일을 선택하는 드롭다운 메뉴 추가
 chat_filename_var = tk.StringVar()
 chat_files = [f for f in os.listdir("chat_logs") if os.path.isfile(os.path.join("chat_logs", f))]
 ttk.Label(configuration_frame, text="Chat Log:").grid(row=config_row, column=0, sticky="w")
@@ -720,10 +730,12 @@ chat_file_dropdown = ttk.OptionMenu(configuration_frame, chat_filename_var, defa
 chat_file_dropdown.grid(row=config_row, column=1, sticky="w")
 
 # Add a button to load the selected chat log
+# 선택한 채팅 로그를 로드하는 버튼 추가
 load_button = ttk.Button(configuration_frame, text="Load Chat", command=load_chat_history)
 load_button.grid(row=config_row, column=2, sticky="w")
 
 # Add a button to save the chat history
+# 채팅 기록 저장 버튼 추가
 save_button = ttk.Button(configuration_frame, text="Save Chat", command=save_chat_history)
 save_button.grid(row=config_row, column=3, sticky="w")
 
@@ -733,11 +745,13 @@ apikey_var.trace("w", on_config_changed)
 orgid_var.trace("w", on_config_changed)
 
 # Create the hamburger menu button and bind it to the show_popup function
+# 햄버거 메뉴 버튼을 만들고 show_popup 함수에 바인딩합니다.
 hamburger_button = ttk.Button(configuration_frame, text="≡", command=show_popup)
 hamburger_button.grid(row=config_row, column=9, padx=10, pady=10, sticky="w")
 
 default_bg_color = get_default_bg_color(app)
 # Create styles for light and dark modes
+# 밝은 모드와 어두운 모드에 대한 스타일 만들기
 style = ttk.Style(app)
 style.configure("Dark.TFrame", background="#2c2c2c")
 style.configure("Dark.TLabel", background="#2c2c2c", foreground="#ffffff")
@@ -752,12 +766,15 @@ if load_dark_mode_state():
     toggle_dark_mode()
     
 # Add a separator
+# 구분 기호 추가
 ttk.Separator(configuration_frame, orient='horizontal').grid(row=config_row+1, column=0, columnspan=10, sticky="we", pady=3)
 
 # Set the weights for the configuration frame
+# 구성 프레임의 가중치 설정
 configuration_frame.columnconfigure(3, weight=1)
 
 # Configure weights for resizing behavior
+# 크기 조정 동작에 대한 가중치 구성
 app.columnconfigure(0, weight=1)
 app.rowconfigure(0, weight=0)
 app.rowconfigure(1, weight=1)
@@ -765,13 +782,16 @@ main_frame.columnconfigure(1, weight=1)
 main_frame.rowconfigure(1, weight=1)
 
 # Initialize the previous_focused_widget variable
+# previous_focused_widget 변수 초기화
 previous_focused_widget = None
 
 # Bind events
+# 바인드 이벤트
 inner_frame.bind("<Configure>", configure_scrollregion)
 app.bind("<Configure>", update_entry_widths)
 app.bind_class('Entry', '<FocusOut>', update_previous_focused_widget)
 app.bind("<Escape>", lambda event: show_popup())
     
 # Start the application main loop
+# 애플리케이션 메인 루프 시작
 app.mainloop()
